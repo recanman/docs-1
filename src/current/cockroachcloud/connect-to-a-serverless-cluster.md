@@ -28,14 +28,12 @@ Removing or adding an authorized network on your CockroachDB {{ site.data.produc
 ### Establish AWS PrivateLink
 
 {{site.data.alerts.callout_info}}
-AWS PrivateLink for CockroachDB {{ site.data.products.serverless }} is in **[limited access](https://www.cockroachlabs.com/docs/{{ site.current_cloud_version }}/cockroachdb-feature-availability)** and is only available to enrolled organizations. To enroll your organization, contact your Cockroach Labs account team. This feature is subject to change.
+AWS PrivateLink for CockroachDB {{ site.data.products.serverless }} is in **[limited access](https://www.cockroachlabs.com/docs/{{ site.current_cloud_version }}/cockroachdb-feature-availability)** and is only available for multi-region CockroachDB {{ site.data.products.serverless }} clusters deployed on AWS. To enroll your organization, contact your Cockroach Labs account team. This feature is subject to change.
 {{site.data.alerts.end}}
 
 Amazon Web Services (AWS) PrivateLink support allows customers to establish SQL access to their clusters entirely through private AWS infrastructure, without exposure to the public internet, affording enhanced security and performance.
 
-AWS PrivateLink is available only for multiregion CockroachDB {{ site.data.products.serverless }} clusters deployed on AWS.
-
-To configure PrivateLink, you create the AWS PrivateLink connection in your AWS account, then configure your cluster to allow connections from your private endpoint. For more information and detailed instructions, refer to[Network Authorization: AWS PrivateLink]({% link cockroachcloud/network-authorization.md %}#aws-privatelink).
+To configure PrivateLink, you create the AWS PrivateLink connection in your AWS account, then configure your cluster to allow connections from your private endpoint. For more information and detailed instructions, refer to [Network Authorization: AWS PrivateLink]({% link cockroachcloud/network-authorization.md %}#aws-privatelink).
 
 AWS PrivateLink can be configured only after the cluster is created. For detailed instructions, refer to [Managing AWS PrivateLink for a cluster](aws-privatelink.html?filter-content=serverless).
 
@@ -60,9 +58,9 @@ Private connectivity is not available for CockroachDB {{ site.data.products.serv
 1. Select a connection method from the **Select option** dropdown (the instructions below will adjust accordingly):
 
     <div class="filters clearfix">
+        <button class="filter-button page-level" data-scope="command-line">Command line</button>
         <button class="filter-button page-level" data-scope="connection-string">General connection string</button>
         <button class="filter-button page-level" data-scope="connection-parameters">Connection parameters</button>
-        <button class="filter-button page-level" data-scope="cockroachdb-client">CockroachDB client</button>
     </div>
 
   <section class="filter-content" markdown="1" data-scope="connection-string">
@@ -104,8 +102,9 @@ For connection examples and code snippets in your language, see the following:
     `{database}`  | The name of the (existing) database.
 
   </section>
-  <section class="filter-content" markdown="1" data-scope="cockroachdb-client">
+  <section class="filter-content" markdown="1" data-scope="command-line">
 
+1. Select **CockroachDB Client** from the **Select option/language** dropdown.
 1. In the **Download CA Cert** section of the dialog, select your operating system, and use the command provided to download the CA certificate to the default PostgreSQL certificate directory on your machine.
 1. In the **Download the latest CockroachDB Client** section of the dialog, select your operating system, and use the command provided to install CockroachDB.
 1. If you [established a private connection using AWS PrivateLink](#establish-aws-privatelink), change **Connection type** from **Public connection** to **Private connection** to connect privately.

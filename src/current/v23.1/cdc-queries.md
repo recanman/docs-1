@@ -18,6 +18,8 @@ You can use CDC queries to do the following:
 
 You can use any CockroachDB-supported SQL expression syntax that is not listed in [limitations](#limitations) to build a changefeed query.
 
+CDC queries can improve the efficiency of changefeeds because queries can restrict the amount of data that the job must encode before emitting to a sink or SQL client. This can also help the performance of table scans when a changefeed runs a catch-up or [initial scan]({% link {{ page.version.version }}/create-changefeed.md %}#initial-scan).
+
 See the [Examples](#examples) section for further use cases.
 
 ## Syntax
@@ -172,17 +174,21 @@ To emit the previous state of a row, it is necessary to explicitly call `cdc_pre
 
 {% include_cached copy-clipboard.html %}
 ~~~ sql
-CREATE CHANGEFEED INTO 'external://sink' AS SELECT *, cdc_prev FROM movr.rides;
+CREATE CHANGEFEED INTO 'external://sink' AS SELECT rider_id, vehicle_id, cdc_prev FROM movr.rides;
 ~~~
 
 To emit the previous state of a column, you can specify this as a named field from the `cdc_prev` tuple with the following syntax:
 
 {% include_cached copy-clipboard.html %}
 ~~~ sql
-CREATE CHANGEFEED INTO 'external://sink' AS SELECT *, cdc_prev FROM movr.vehicles WHERE (cdc_prev).status = 'in_use';
+CREATE CHANGEFEED INTO 'external://sink' AS SELECT owner_id, (cdc_prev).current_location AS previous_location FROM movr.vehicles WHERE (cdc_prev).status = 'in_use';
 ~~~
 
 For newly inserted rows in a table, the `cdc_prev` column will emit as `NULL`.
+
+{{site.data.alerts.callout_info}}
+If you do not need to select specific columns in a table or filter rows from a changefeed, you can instead create a changefeed using the [`diff` option]({% link {{ page.version.version }}/create-changefeed.md %}#diff-opt) to emit a `before` field with each message. This field includes the value of the row before the update was applied.
+{{site.data.alerts.end}}
 
 ### Geofilter a changefeed
 

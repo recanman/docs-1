@@ -23,7 +23,7 @@ You can authorize network access to your cluster by:
 {{site.data.alerts.callout_success}}
 Use GCP VPC Peering or AWS PrivateLink if:
 
-- You need to allowlist more defined IP address ranges than allowed by the maximum (20 for CockroachDB {{ site.data.products.dedicated }} clusters and 50 for CockroachDB {{ site.data.products.serverless }}). For CockroachDB {{ site.data.products.dedicated }} clusters on AWS, reach out to your Cockroach Labs team or support to increase the limit if needed.
+- You need to allowlist more defined IP address ranges than the [default maximum](#ip-allowlisting).
 - Your servers’ IP addresses are not static.
 - You want to avoid exposing your cluster to the public internet.
 
@@ -32,7 +32,7 @@ Learn more about [Private Clusters (Preview)]({% link cockroachcloud/private-clu
 
 {{site.data.alerts.callout_info}}
 
-During [limited access](https://www.cockroachlabs.com/docs/{{ site.current_cloud_version }}/cockroachdb-feature-availability), neither Azure Private Link nor private clusters are available for CockroachDB {{ site.data.products.dedicated }} clusters on Azure. Refer to [CockroachDB {{ site.data.products.dedicated }} on Azure]({% link cockroachcloud/cockroachdb-dedicated-on-azure.md %}).
+Neither Azure Private Link nor private clusters are available for [CockroachDB {{ site.data.products.dedicated }} on Azure]({% link cockroachcloud/cockroachdb-dedicated-on-azure.md %}).
 {{site.data.alerts.end}}
 
 ## Cluster default network configuration
@@ -50,12 +50,15 @@ Authorized network access can be managed from the CockroachDB {{ site.data.produ
 
 `https://cockroachlabs.cloud/cluster/{ your cluster UUID}/networking`
 
-Serverless and Dedicated clusters support different maximum numbers of IP allowlist rules:
+{{ site.data.products.serverless }} and {{ site.data.products.dedicated }} clusters support different maximum numbers of IP allowlist rules:
 
-Cluster Type | IP allowlist rule max
---------|------------
-Dedicated|20
-Serverless|50
+Cluster Type                | IP allowlist rule max
+----------------------------|------------
+Dedicated (AWS)             | 7
+Dedicated (GCP and Azure)   | 200
+Serverless                  | 50
+
+If you need to add more than the maximum number of allowlist rules, [contact Support](https://support.cockroachlabs.com).
 
 {{site.data.alerts.callout_info}}
 While developing and testing your application, you may add `0.0.0.0/0` to the allowlist, which allows all networks. However, before moving into production, make sure you delete the `0.0.0.0/0` network.

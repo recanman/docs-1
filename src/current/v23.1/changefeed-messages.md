@@ -18,7 +18,9 @@ This page describes the format and behavior of changefeed messages. You will fin
 - [Duplicate messages](#duplicate-messages): The causes of duplicate messages from a changefeed.
 - [Schema changes](#schema-changes): The effect of schema changes on a changefeed.
 - [Garbage collection](#garbage-collection-and-changefeeds): How protected timestamps and garbage collection interacts with running changefeeds.
-- [Avro](#avro): The limitations and type mapping when creating a changefeed using Avro format.
+- [Message formats](#message-formats): The limitations and type mapping when creating a changefeed with different message formats.
+
+To filter the data that a changefeed emits in each message, refer to the [Change Data Capture Queries]({% link {{ page.version.version }}/cdc-queries.md %}) page.
 
 {{site.data.alerts.callout_info}}
 {% include {{page.version.version}}/cdc/types-udt-composite-general.md %}
@@ -105,6 +107,8 @@ The message envelope contains a primary key array when your changefeed is emitti
         ~~~
         {"after": {"city": "washington dc", "creation_time": "2019-01-02T03:04:05", "current_location": "46227 Jeremy Haven Suite 92", "ext": {"brand": "Schwinn", "color": "red"}, "id": "298cc7a0-de6b-4659-ae57-eaa2de9d99c3", "owner_id": "beda1202-63f7-41d2-aa35-ee3a835679d1", "status": "in_use", "type": "bike"}, "key": ["washington dc", "298cc7a0-de6b-4659-ae57-eaa2de9d99c3"]}
         ~~~
+
+#### `wrapped` and `diff`
 
 To include a `before` field in the changefeed message that contains the state of a row before an update in the changefeed message, use the `diff` option with `wrapped`:
 
@@ -384,7 +388,7 @@ After the schema change, the changefeed will emit a copy of the table with the n
 [3]	{"id": 3, "likes_treats": true, "name": "Ernie"}
 ~~~
 
-If the schema change does **not** use the declarative schema change by default, the changefeed will emit a copy of the altered table and a copy of the table using the new schema:
+If the schema change does **not** use the declarative schema changer by default, the changefeed will emit a copy of the altered table and a copy of the table using the new schema:
 
 ~~~json
 [1]	{"id": 1, "name": "Petee H"}
@@ -437,17 +441,27 @@ The only ways for changefeeds to **not** protect data are:
 - You cancel the changefeed.
 - The changefeed fails without [`on_error=pause`]({% link {{ page.version.version }}/create-changefeed.md %}#on-error) set.
 
-## Avro
+## Message formats
 
-The following sections provide information on Avro usage with CockroachDB changefeeds. Creating a changefeed using Avro is available in Core and {{ site.data.products.enterprise }} changefeeds.
+{% include {{ page.version.version }}/cdc/message-format-list.md %}
 
-### Avro limitations
+{{site.data.alerts.callout_info}}
+{% include {{page.version.version}}/cdc/types-udt-composite-general.md %}
+{{site.data.alerts.end}}
+
+The following sections outline the limitations and type mapping for relevant formats.
+
+### Avro
+
+The following sections provide information on Avro usage with CockroachDB changefeeds. Creating a changefeed using Avro is available in Core and {{ site.data.products.enterprise }} changefeeds with the [`confluent_schema_registry`](create-changefeed.html#confluent-registry) option.
+
+#### Avro limitations
 
 Below are clarifications for particular SQL types and values for Avro changefeeds:
 
 {% include {{ page.version.version }}/cdc/avro-limitations.md %}
 
-### Avro types
+#### Avro types
 
 Below is a mapping of CockroachDB types to Avro types:
 
@@ -479,7 +493,7 @@ CockroachDB Type | Avro Type | Avro Logical Type
 The `DECIMAL` type is a union between Avro `STRING` and Avro `DECIMAL` types.
 {{site.data.alerts.end}}
 
-## CSV
+### CSV
 
 You can use the [`format=csv`]({% link {{ page.version.version }}/create-changefeed.md %}#format) option to emit CSV format messages from your changefeed. However, there are the following limitations with this option:
 
